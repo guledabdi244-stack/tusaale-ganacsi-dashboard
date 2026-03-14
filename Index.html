@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SomaliTutor – Learning Platform</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#faf6ef;font-family:system-ui,-apple-system,sans-serif;overflow:hidden;}
+:root{--navy:#0d1b2e;--mid:#162236;--sand:#c9a96e;--sandl:#e8d5b0;--cream:#faf6ef;--white:#fff;--tp:#1a1208;--ts:#5a4a30;--tm:#9a8a70;}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:2px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#app{height:100vh;display:flex;flex-direction:column;}
+/* TOPBAR */
+#topbar{background:var(--navy);height:56px;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;border-bottom:1px solid rgba(201,169,110,.16);position:relative;overflow:hidden;}
+#topbar::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,rgba(201,169,110,.03) 0,rgba(201,169,110,.03) 1px,transparent 0,transparent 22px);background-size:31px 31px;}
+.logo{display:flex;align-items:center;gap:8px;min-width:185px;position:relative;z-index:1;}
+.logo-box{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;}
+.logo-diamond{position:absolute;inset:2px;border:1.5px solid rgba(201,169,110,.5);border-radius:6px;transform:rotate(45deg);}
+.logo-text{font-family:Georgia,serif;font-weight:700;font-size:15.5px;color:#fff;}
+.logo-text span{color:var(--sand);}
+.logo-sub{font-size:7px;color:rgba(201,169,110,.42);letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+.search-wrap{flex:1;max-width:340px;position:relative;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(201,169,110,.38);}
+#search-input{width:100%;padding:7px 12px 7px 30px;border:1px solid rgba(201,169,110,.16);border-radius:7px;font-size:12px;outline:none;background:rgba(255,255,255,.05);color:#fff;font-family:inherit;}
+#search-input::placeholder{color:rgba(201,169,110,.35);}
+.top-spacer{flex:1;}
+.top-actions{display:flex;align-items:center;gap:6px;}
+.icon-btn{background:none;border:1px solid rgba(201,169,110,.16);color:rgba(201,169,110,.58);cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.user-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c9a96e,#8b5a2b);border:2px solid rgba(201,169,110,.35);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;color:var(--navy);font-size:12px;}
+.user-name{font-size:11.5px;font-weight:700;color:#fff;}
+.user-role{font-size:8.5px;color:rgba(201,169,110,.42);}
+/* BODY */
+#body{display:flex;flex:1;overflow:hidden;}
+/* SIDEBAR */
+#sidebar{width:200px;background:var(--mid);border-right:1px solid rgba(201,169,110,.09);display:flex;flex-direction:column;padding:16px 0 12px;flex-shrink:0;}
+nav{flex:1;display:flex;flex-direction:column;gap:1px;padding:0 8px;}
+.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;background:none;border:none;border-radius:7px;cursor:pointer;color:rgba(180,200,225,.38);font-weight:400;font-size:12.5px;text-align:left;font-family:inherit;position:relative;transition:all .13s;}
+.nav-btn:hover{background:rgba(201,169,110,.08);color:var(--sand);}
+.nav-btn.active{background:rgba(201,169,110,.1);color:var(--sand);font-weight:700;}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:15px;background:var(--sand);border-radius:0 2px 2px 0;}
+.nav-icon{color:rgba(180,200,225,.3);display:flex;}
+.nav-btn.active .nav-icon{color:var(--sand);}
+.divider{margin:10px 14px;height:1px;background:rgba(201,169,110,.08);}
+.next-widget{margin:0 8px 11px;background:rgba(201,169,110,.05);border-radius:9px;padding:11px 10px;border:1px solid rgba(201,169,110,.12);}
+.nw-title{font-size:8px;color:var(--sand);font-weight:700;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:7px;}
+.nw-row{display:flex;align-items:center;gap:6px;}
+.nw-name{font-size:11px;font-weight:700;color:var(--sandl);}
+.nw-meta{font-size:9.5px;color:rgba(180,200,225,.35);}
+.nw-footer{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+.nw-time{font-size:9px;color:rgba(180,200,225,.28);}
+.join-btn{background:linear-gradient(135deg,#2d6e5a,#22c55e);color:#fff;border:none;border-radius:5px;padding:3px 8px;font-size:9.5px;font-weight:700;cursor:pointer;}
+.logout-wrap{padding:0 8px;}
+.logout-btn{width:100%;padding:7px;background:none;border:1px solid rgba(201,169,110,.1);border-radius:6px;cursor:pointer;color:rgba(180,200,225,.25);font-size:11px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;}
+/* AV */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;flex-shrink:0;}
+/* MAIN */
+#main{flex:1;display:flex;overflow:hidden;}
+/* FEED */
+#feed{flex:1;padding:18px 16px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;}
+.welcome-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;animation:fadeUp .4s .04s both;}
+.welcome-date{font-size:9px;color:var(--sand);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.welcome-h1{font-family:Georgia,serif;font-size:20px;color:var(--tp);font-weight:700;line-height:1.25;}
+.stats-row{display:flex;gap:6px;}
+.stat-card{background:var(--white);border:1px solid rgba(201,169,110,.16);border-radius:9px;padding:8px 11px;text-align:center;box-shadow:0 2px 7px rgba(13,27,46,.06);}
+.stat-val{font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);}
+.stat-lbl{font-size:8.5px;color:var(--tm);margin-top:1px;}
+.pills-row{display:flex;gap:5px;flex-wrap:wrap;animation:fadeUp .4s .1s both;}
+.pill{padding:4px 12px;background:var(--white);border:1px solid rgba(201,169,110,.22);border-radius:20px;font-size:11px;color:var(--ts);cursor:pointer;font-family:inherit;font-weight:400;transition:all .13s;}
+.pill:hover{transform:translateY(-1px);}
+.pill.active{background:var(--navy);border-color:var(--navy);color:var(--sand);font-weight:700;}
+.section{animation:fadeUp .4s .16s both;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.section-left{display:flex;align-items:center;gap:6px;}
+.section-h2{font-family:Georgia,serif;font-size:14.5px;font-weight:700;color:var(--tp);}
+.section-count{background:rgba(201,169,110,.13);border-radius:20px;padding:1px 7px;font-size:9.5px;color:var(--sand);font-weight:700;}
+.view-all-btn{background:none;border:none;color:var(--sand);font-size:11px;font-weight:700;cursor:pointer;}
+#tutor-list{display:flex;flex-direction:column;gap:7px;}
+.tutor-card{background:var(--white);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;border:1.5px solid rgba(201,169,110,.11);box-shadow:0 2px 6px rgba(13,27,46,.04);position:relative;overflow:hidden;transition:transform .17s,box-shadow .17s,border-color .17s;}
+.tutor-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,27,46,.1);}
+.tutor-card.sel{border-color:#c9a96e;box-shadow:0 3px 16px rgba(201,169,110,.16);}
+.tutor-card.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#c9a96e,#8b5a2b);border-radius:11px 0 0 11px;}
+.t-info{flex:1;}
+.t-name-row{display:flex;align-items:center;gap:5px;margin-bottom:2px;}
+.t-name{font-family:Georgia,serif;font-weight:700;font-size:13.5px;color:var(--tp);}
+.t-tag{font-size:8px;font-weight:700;padding:2px 5px;border-radius:20px;letter-spacing:.3px;}
+.t-stars{font-size:10.5px;margin-bottom:2px;color:#c9a96e;}
+.t-meta{font-size:10.5px;color:var(--ts);}
+.t-price-col{text-align:right;}
+.t-price{font-family:Georgia,serif;font-weight:700;font-size:15px;color:var(--navy);}
+.t-per{font-size:9px;color:var(--tm);margin-bottom:4px;}
+.t-sel-btn{border-radius:5px;padding:2px 8px;font-size:9.5px;font-weight:700;border:1px solid rgba(201,169,110,.25);background:transparent;color:var(--tm);cursor:pointer;font-family:inherit;}
+.tutor-card.sel .t-sel-btn{background:var(--navy);color:var(--sand);border-color:var(--navy);}
+.action-row{display:flex;gap:8px;margin-top:12px;}
+.btn-book{flex:1;padding:10px;background:var(--navy);color:var(--sand);border:1px solid rgba(201,169,110,.25);border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:filter .15s;}
+.btn-book:hover{filter:brightness(1.15);}
+.btn-trial{flex:1;padding:10px;background:linear-gradient(135deg,#2d6e5a,#22c55e);color:#fff;border:none;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(45,110,90,.25);}
+/* IN PROGRESS */
+.prog-card{background:var(--white);border-radius:11px;padding:14px;border:1.5px solid rgba(201,169,110,.11);box-shadow:0 2px 6px rgba(13,27,46,.04);}
+.prog-card-name{font-family:Georgia,serif;font-weight:700;font-size:13.5px;color:var(--tp);}
+.active-badge{background:#e8f5f0;border-radius:5px;padding:2px 7px;font-size:8.5px;font-weight:700;color:#2d6e5a;letter-spacing:.3px;}
+.prog-quote{font-size:11.5px;color:var(--ts);margin-top:3px;line-height:1.5;font-style:italic;}
+.prog-bar-wrap{margin-top:11px;}
+.prog-bar-top{display:flex;justify-content:space-between;margin-bottom:3px;}
+.prog-bar-bg{background:rgba(201,169,110,.1);border-radius:3px;height:5px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#0d1b2e,#c9a96e);border-radius:3px;}
+/* RIGHT */
+#right{width:278px;padding:18px 14px 18px 0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.book-card{background:var(--white);border-radius:13px;padding:17px;border:1.5px solid rgba(201,169,110,.17);box-shadow:0 4px 16px rgba(13,27,46,.08);position:relative;overflow:hidden;}
+.book-lbl{font-size:8px;color:var(--sand);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.book-name{font-family:Georgia,serif;font-size:14.5px;font-weight:700;color:var(--tp);margin-bottom:1px;}
+.book-sub{font-size:10.5px;color:var(--tm);margin-bottom:13px;}
+.field-lbl{font-size:9px;color:var(--ts);font-weight:700;letter-spacing:.6px;margin-bottom:4px;text-transform:uppercase;}
+.slot-select{width:100%;padding:7px 10px;border:1.5px solid rgba(201,169,110,.16);border-radius:7px;font-size:11.5px;background:var(--cream);outline:none;color:var(--tp);font-family:inherit;cursor:pointer;margin-bottom:12px;appearance:none;-webkit-appearance:none;}
+.pay-opt{display:flex;align-items:center;width:100%;padding:7px 9px;border:1.5px solid rgba(201,169,110,.12);border-radius:7px;background:var(--cream);cursor:pointer;margin-bottom:5px;gap:7px;font-family:inherit;transition:all .13s;}
+.pay-opt:hover,.pay-opt.active{border-color:var(--sand);background:rgba(201,169,110,.07);}
+.pay-icon{color:var(--tm);}
+.pay-opt.active .pay-icon{color:var(--sand);}
+.pay-lbl{flex:1;font-size:11.5px;color:var(--ts);text-align:left;}
+.pay-opt.active .pay-lbl{font-weight:700;color:var(--tp);}
+.pay-dot{width:5px;height:5px;border-radius:50%;background:var(--sand);display:none;}
+.pay-opt.active .pay-dot{display:block;}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin:9px 0;padding-top:9px;border-top:1px solid rgba(201,169,110,.09);}
+.total-lbl{font-size:10.5px;color:var(--tm);}
+.total-amt{font-family:Georgia,serif;font-weight:700;font-size:14px;color:var(--navy);}
+.confirm-btn{width:100%;padding:11px;background:linear-gradient(135deg,#0d1b2e,#1e3352);color:var(--sand);border:1.5px solid rgba(201,169,110,.28);border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 10px rgba(201,169,110,.16);transition:all .17s;}
+.confirm-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.confirm-btn.done{background:linear-gradient(135deg,#2d6e5a,#22c55e);color:#fff;border-color:#22c55e;box-shadow:0 4px 12px rgba(34,197,94,.24);}
+.live-card{background:var(--navy);border-radius:13px;padding:14px;position:relative;overflow:hidden;}
+.live-card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,rgba(201,169,110,.022) 0,rgba(201,169,110,.022) 1px,transparent 0,transparent 24px);background-size:34px 34px;}
+.live-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;z-index:1;}
+.live-title{font-family:Georgia,serif;font-size:12.5px;font-weight:700;color:var(--sandl);}
+.live-badge{background:#ef4444;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;display:flex;align-items:center;gap:3px;}
+.live-dot{width:4px;height:4px;border-radius:50%;background:#fff;animation:pulse 1.2s infinite;}
+.live-screen{background:linear-gradient(135deg,#0a1520,#0d1b2e);border-radius:9px;padding:14px 11px;display:flex;align-items:center;justify-content:space-between;min-height:114px;border:1px solid rgba(201,169,110,.08);}
+.live-person{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.live-lbl{font-size:8.5px;letter-spacing:.3px;}
+.arabic-box{background:rgba(255,255,255,.97);border-radius:7px;padding:8px 12px;display:flex;gap:8px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+.arabic-char{font-size:22px;font-weight:700;color:var(--navy);}
+.live-controls{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;position:relative;z-index:1;}
+.ctrl-btn{background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.11);color:rgba(201,169,110,.45);border-radius:6px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.end-btn{background:#ef4444;border:none;color:#fff;font-size:10.5px;font-weight:700;border-radius:6px;padding:6px 11px;cursor:pointer;}
+.pw-card{background:var(--white);border-radius:11px;padding:13px;border:1.5px solid rgba(201,169,110,.11);box-shadow:0 2px 6px rgba(13,27,46,.04);}
+.pw-title{font-size:8.5px;color:var(--sand);font-weight:700;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:10px;}
+.pw-item{margin-bottom:9px;}
+.pw-item:last-child{margin-bottom:0;}
+.pw-row{display:flex;justify-content:space-between;margin-bottom:3px;}
+.pw-name{font-size:10.5px;color:var(--ts);}
+.pw-val{font-size:10px;font-weight:700;color:var(--tp);}
+.pw-bg{background:rgba(201,169,110,.09);border-radius:3px;height:4px;overflow:hidden;}
+.pw-fill{height:100%;border-radius:3px;}
+.empty{text-align:center;padding:20px;color:var(--tm);font-size:12px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="logo">
+      <div class="logo-box">
+        <div class="logo-diamond"></div>
+        <span style="font-size:13px;position:relative;z-index:1;">📚</span>
+      </div>
+      <div>
+        <div class="logo-text">Somali<span>Tutor</span></div>
+        <div class="logo-sub">Learning Platform</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Search tutors or subjects…"/>
+    </div>
+    <div class="top-spacer"></div>
+    <div class="top-actions">
+      <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+      <div style="display:flex;align-items:center;gap:7px;margin-left:2px;">
+        <div style="text-align:right;"><div class="user-name">Ayaan</div><div class="user-role">Student</div></div>
+        <div class="user-av">A</div>
+      </div>
+    </div>
+  </header>
+
+  <div id="body">
+    <aside id="sidebar">
+      <nav id="sidenav">
+        <button class="nav-btn" data-nav="Dashboard">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard
+        </button>
+        <button class="nav-btn active" data-nav="Find Tutors">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>Find Tutors
+        </button>
+        <button class="nav-btn" data-nav="My Lessons">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>My Lessons
+        </button>
+        <button class="nav-btn" data-nav="Messages">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Messages
+        </button>
+        <button class="nav-btn" data-nav="Payments">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span>Payments
+        </button>
+        <button class="nav-btn" data-nav="Settings">
+          <span class="nav-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings
+        </button>
+      </nav>
+      <div class="divider"></div>
+      <div class="next-widget">
+        <div class="nw-title">Next Lesson</div>
+        <div class="nw-row">
+          <div class="av" style="width:28px;height:28px;font-size:9px;background:#162236;border:2px solid #c9a96e;color:#c9a96e;">KW</div>
+          <div><div class="nw-name">Khadra W.</div><div class="nw-meta">Quran · $15/hr</div></div>
+        </div>
+        <div class="nw-footer">
+          <span class="nw-time">Today 4:30 PM</span>
+          <button class="join-btn">Join →</button>
+        </div>
+      </div>
+      <div class="logout-wrap">
+        <button class="logout-btn">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </button>
+      </div>
+    </aside>
+
+```
+<div id="main">
+  <div id="feed">
+    <div class="welcome-row">
+      <div>
+        <div class="welcome-date">Saturday, March 14</div>
+        <h1 class="welcome-h1">Welcome back, <em>Ayaan</em> 👋</h1>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">Lessons</div></div>
+        <div class="stat-card"><div class="stat-val">4.9★</div><div class="stat-lbl">Rating</div></div>
+        <div class="stat-card"><div class="stat-val">3</div><div class="stat-lbl">Week</div></div>
+      </div>
+    </div>
+
+    <div class="pills-row" id="pills-row">
+      <button class="pill active" data-filter="All">All</button>
+      <button class="pill" data-filter="Quran">Quran</button>
+      <button class="pill" data-filter="Maths">Maths</button>
+      <button class="pill" data-filter="English">English</button>
+      <button class="pill" data-filter="Arabic">Arabic</button>
+    </div>
+
+    <div class="section">
+      <div class="section-hdr">
+        <div class="section-left">
+          <h2 class="section-h2">Featured Tutors</h2>
+          <span class="section-count" id="tutor-count">4</span>
+        </div>
+        <button class="view-all-btn" id="view-all-btn">All →</button>
+      </div>
+      <div id="tutor-list"></div>
+      <div class="action-row">
+        <button class="btn-book">Book a Lesson</button>
+        <button class="btn-trial">Free Trial →</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-hdr"><div class="section-left"><h2 class="section-h2">In Progress</h2></div></div>
+      <div class="prog-card">
+        <div style="display:flex;gap:10px;">
+          <div class="av" style="width:40px;height:40px;font-size:12px;background:#201535;border:2px solid #b59bf0;color:#b59bf0;flex-shrink:0;">HM</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span class="prog-card-name">Hassan M.</span>
+              <span class="active-badge">ACTIVE</span>
+            </div>
+            <p class="prog-quote">"Great teacher. My son loves the classes — his recitation has improved enormously."</p>
+            <div style="margin-top:3px;font-size:11.5px;color:#c9a96e;">★★★★½</div>
+          </div>
+        </div>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar-top">
+            <span style="font-size:9.5px;color:var(--tm);text-transform:uppercase;letter-spacing:.3px;">Progress</span>
+            <span style="font-size:9.5px;font-weight:700;color:var(--navy);">75%</span>
+          </div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div class="book-card">
+      <div class="book-lbl">Book Session</div>
+      <div class="book-name" id="book-name">Khadra Warsame</div>
+      <div class="book-sub" id="book-sub">Quran &amp; Tajweed</div>
+      <div class="field-lbl">Time Slot</div>
+      <select class="slot-select" id="slot-select">
+        <option>4:30 PM – 5:00 PM</option>
+        <option>5:00 PM – 5:30 PM</option>
+        <option>6:00 PM – 6:30 PM</option>
+        <option>7:00 PM – 7:30 PM</option>
+      </select>
+      <div class="field-lbl" style="margin-bottom:5px;">Payment</div>
+      <button class="pay-opt active" data-pay="card">
+        <span class="pay-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span>
+        <span class="pay-lbl">Credit / Debit Card</span><span class="pay-dot"></span>
+      </button>
+      <button class="pay-opt" data-pay="paypal">
+        <span class="pay-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></span>
+        <span class="pay-lbl">PayPal</span><span class="pay-dot"></span>
+      </button>
+      <button class="pay-opt" data-pay="mobile">
+        <span class="pay-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
+        <span class="pay-lbl">Mobile Money</span><span class="pay-dot"></span>
+      </button>
+      <div class="total-row">
+        <span class="total-lbl">Total (30 min)</span>
+        <span class="total-amt" id="total-amt">$8</span>
+      </div>
+      <button class="confirm-btn" id="confirm-btn">Confirm &amp; Pay $8</button>
+    </div>
+
+    <div class="live-card">
+      <div class="live-hdr">
+        <div class="live-title">Live Session</div>
+        <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+      </div>
+      <div class="live-screen">
+        <div class="live-person">
+          <div class="av" style="width:42px;height:42px;font-size:13px;background:linear-gradient(135deg,#162236,#1a4a7a);border:2px solid rgba(201,169,110,.45);color:#c9a96e;">KW</div>
+          <span class="live-lbl" style="color:rgba(201,169,110,.45);">Khadra</span>
+        </div>
+        <div class="arabic-box">
+          <span class="arabic-char">بَ</span>
+          <span class="arabic-char">ثَ</span>
+        </div>
+        <div class="live-person">
+          <div class="av" style="width:33px;height:33px;font-size:12px;background:linear-gradient(135deg,#c9a96e,#8b5a2b);border:2px solid rgba(201,169,110,.35);color:#0d1b2e;">A</div>
+          <span class="live-lbl" style="color:rgba(201,169,110,.38);">Ayaan</span>
+        </div>
+      </div>
+      <div class="live-controls">
+        <button class="ctrl-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></button>
+        <button class="ctrl-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></button>
+        <button class="ctrl-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+        <button class="end-btn">End</button>
+      </div>
+    </div>
+
+    <div class="pw-card">
+      <div class="pw-title">Your Progress</div>
+      <div class="pw-item"><div class="pw-row"><span class="pw-name">Quran lessons</span><span class="pw-val">8/12</span></div><div class="pw-bg"><div class="pw-fill" style="width:66.6%;background:#c9a96e;"></div></div></div>
+      <div class="pw-item"><div class="pw-row"><span class="pw-name">Somali vocabulary</span><span class="pw-val">240/300</span></div><div class="pw-bg"><div class="pw-fill" style="width:80%;background:#2d6e5a;"></div></div></div>
+      <div class="pw-item"><div class="pw-row"><span class="pw-name">Arabic letters</span><span class="pw-val">22/28</span></div><div class="pw-bg"><div class="pw-fill" style="width:78.5%;background:#5a7fc9;"></div></div></div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+const tutors=[
+  {id:1,name:"Khadra Warsame",ini:"KW",rating:4.9,reviews:128,lang:"Somali",price:15,subject:"Quran & Tajweed",tag:"Top Rated",tagColor:"#b8860b",bg:"#162236",border:"#c9a96e",tc:"#c9a96e"},
+  {id:2,name:"Ahmed Abdullahi",ini:"AA",rating:4.8,reviews:94,lang:"Somali",price:12,subject:"English Language",tag:"Popular",tagColor:"#2d6e5a",bg:"#1a3326",border:"#6bbf9e",tc:"#6bbf9e"},
+  {id:3,name:"Fadumo Osman",ini:"FO",rating:4.7,reviews:71,lang:"Somali",price:10,subject:"Mathematics",tag:"New",tagColor:"#5a7fc9",bg:"#201535",border:"#b59bf0",tc:"#b59bf0"},
+  {id:4,name:"Omar Hassan",ini:"OH",rating:4.6,reviews:55,lang:"Arabic",price:18,subject:"Arabic Language",tag:"Expert",tagColor:"#8b5a2b",bg:"#2e1a0a",border:"#e0a86e",tc:"#e0a86e"}
+];
+let selId=1,showAll=false,filterVal="All",searchVal="";
+
+function starsHtml(n){
+  return'<span style="color:#c9a96e;letter-spacing:1px">'+"★".repeat(Math.floor(n))+'<span style="opacity:.22">'+"★".repeat(5-Math.floor(n))+'</span></span>';
+}
+
+function render(){
+  const filtered=tutors.filter(t=>{
+    const ms=searchVal===""||t.name.toLowerCase().includes(searchVal.toLowerCase())||t.subject.toLowerCase().includes(searchVal.toLowerCase());
+    const mf=filterVal==="All"||t.subject.toLowerCase().includes(filterVal.toLowerCase());
+    return ms&&mf;
+  });
+  const shown=showAll?filtered:filtered.slice(0,2);
+  document.getElementById('tutor-count').textContent=filtered.length;
+  const list=document.getElementById('tutor-list');
+  if(!shown.length){list.innerHTML='<div class="empty">No results found</div>';return;}
+  list.innerHTML=shown.map(t=>`
+    <div class="tutor-card${selId===t.id?' sel':''}" onclick="selectTutor(${t.id})">
+      <div class="av" style="width:44px;height:44px;font-size:14px;background:${t.bg};border:2px solid ${t.border};color:${t.tc};">${t.ini}</div>
+      <div class="t-info">
+        <div class="t-name-row">
+          <span class="t-name">${t.name}</span>
+          <span class="t-tag" style="background:${t.tagColor}20;color:${t.tagColor};">${t.tag}</span>
+        </div>
+        <div class="t-stars">${starsHtml(t.rating)} <span style="color:var(--tm);font-size:10.5px;">${t.rating} (${t.reviews})</span></div>
+        <div class="t-meta">${t.subject} · ${t.lang}</div>
+      </div>
+      <div class="t-price-col">
+        <div class="t-price">$${t.price}</div>
+        <div class="t-per">/hour</div>
+        <div class="t-sel-btn">${selId===t.id?'✓ Selected':'Select'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function selectTutor(id){
+  selId=id;
+  const t=tutors.find(x=>x.id===id);
+  document.getElementById('book-name').textContent=t.name;
+  document.getElementById('book-sub').textContent=t.subject;
+  const h=Math.round(t.price/2);
+  document.getElementById('total-amt').textContent='$'+h;
+  const btn=document.getElementById('confirm-btn');
+  btn.classList.remove('done');
+  btn.textContent='Confirm & Pay $'+h;
+  render();
+}
+
+// Nav
+document.getElementById('sidenav').addEventListener('click',function(e){
+  const btn=e.target.closest('.nav-btn');
+  if(!btn)return;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+// Pills
+document.getElementById('pills-row').addEventListener('click',function(e){
+  const btn=e.target.closest('.pill');
+  if(!btn)return;
+  filterVal=btn.dataset.filter;
+  document.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+});
+
+// View all
+document.getElementById('view-all-btn').addEventListener('click',function(){
+  showAll=!showAll;
+  this.textContent=showAll?'Less ↑':'All →';
+  render();
+});
+
+// Search
+document.getElementById('search-input').addEventListener('input',function(){
+  searchVal=this.value;showAll=true;render();
+});
+
+// Payment
+document.querySelectorAll('.pay-opt').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.pay-opt').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const t=tutors.find(x=>x.id===selId);
+    const cb=document.getElementById('confirm-btn');
+    cb.classList.remove('done');
+    cb.textContent='Confirm & Pay $'+Math.round(t.price/2);
+  });
+});
+
+// Slot
+document.getElementById('slot-select').addEventListener('change',function(){
+  const t=tutors.find(x=>x.id===selId);
+  const cb=document.getElementById('confirm-btn');
+  cb.classList.remove('done');
+  cb.textContent='Confirm & Pay $'+Math.round(t.price/2);
+});
+
+// Confirm
+document.getElementById('confirm-btn').addEventListener('click',function(){
+  this.classList.add('done');
+  this.textContent='✓ Lesson Confirmed!';
+});
+
+render();
+</script>
+
+</body>
+</html>
